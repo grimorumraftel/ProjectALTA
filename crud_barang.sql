@@ -1,0 +1,13 @@
+CREATE TABLE User(
+	Username VARCHAR,
+	Pass VARCHAR
+);
+
+CREATE TABLE Item(
+	Name VARCHAR
+);
+
+CREATE TABLE UserItem(
+	UserID INT,
+	ItemID INT
+);
