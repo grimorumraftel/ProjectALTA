@@ -6,46 +6,44 @@ import (
 	"gorm.io/gorm"
 )
 
-type TopUps struct {
+type TopUp struct {
 	gorm.Model
-	TopUp_ID     uint
-	Username     string `gorm:"foreignKey:UserRefer"`
-	Amount_TopUp uint
-	Topup_At     time.Time
+	TopUpID   uint
+	Username  string `gorm:"foreignKey:UserRefer"`
+	Amount    uint
+	TopUpTime time.Time
 }
 
-type Transfers struct {
+type Transfer struct {
 	gorm.Model
-	Transfer_ID     uint
-	Amount_Transfer uint
-	Transfer_at     time.Time
+	TransferID   uint
+	Amount       uint
+	TransferTime time.Time
 }
 
-type Users struct {
+type User struct {
 	gorm.Model
-	Username   string
-	Name       string
-	Phone      string
-	address    string
-	password   string
-	created_at time.Time
-	Balance    uint
+	Username  string
+	Name      string
+	Phone     string
+	Address   string
+	Password  string
+	CreatedAt time.Time
+	Balance   uint
 }
 
-// FITUR NO.3
-func checkAccount(connection *gorm.DB, Username string) ([]Username, error) {
-	var Usernames []Users
-	err := connection.Table("users_Usernames").Joins("join Usernames on Username = users_Usernames.Username").Where("Usernames = ?", Username).Find(&Usernames).Error
+func CheckAccount(connection *gorm.DB, username string) (User, error) {
+	var user User
+	err := connection.Table("users").Where("username = ?", username).First(&user).Error
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
-	return Usernames, nil
+	return user, nil
 }
 
-// FITUR NO.4
-func updateAccount(connection *gorm.DB, item Item) (bool, error) {
-	err := connection.Save(&item).Error
+func UpdateAccount(connection *gorm.DB, user User) (bool, error) {
+	err := connection.Save(&user).Error
 	if err != nil {
 		return false, err
 	}
@@ -53,9 +51,8 @@ func updateAccount(connection *gorm.DB, item Item) (bool, error) {
 	return true, nil
 }
 
-// FITUR NO.5
-func deleteAccount(connection *gorm.DB, Username string) (bool, error) {
-	err := connection.Delete(&Users{}, Username).Error
+func DeleteAccount(connection *gorm.DB, username string) (bool, error) {
+	err := connection.Delete(&User{}, "username = ?", username).Error
 	if err != nil {
 		return false, err
 	}
@@ -63,10 +60,13 @@ func deleteAccount(connection *gorm.DB, Username string) (bool, error) {
 	return true, nil
 }
 
-// FITUR NO.6
-func topUpAccount(connection *gorm.DB, Username string, Amount_TopUp uint) (bool, error) {
-	usernameTopup := UserItem{Username: Username, Amount_TopUp: Amount_TopUp}
-	err := connection.Create(&usernameTopup).Error
+func TopUpAccount(connection *gorm.DB, username string, amount uint) (bool, error) {
+	topUp := TopUp{
+		Username:  username,
+		Amount:    amount,
+		TopUpTime: time.Now(),
+	}
+	err := connection.Create(&topUp).Error
 	if err != nil {
 		return false, err
 	}
@@ -74,9 +74,8 @@ func topUpAccount(connection *gorm.DB, Username string, Amount_TopUp uint) (bool
 	return true, nil
 }
 
-// FITUR NO.7
-func transferBalance(connection *gorm.DB, Transfer_ID Transfers) (bool, error) {
-	err := connection.Create(&Transfers).Error
+func TransferBalance(connection *gorm.DB, transfer Transfer) (bool, error) {
+	err := connection.Create(&transfer).Error
 	if err != nil {
 		return false, err
 	}
@@ -84,11 +83,14 @@ func transferBalance(connection *gorm.DB, Transfer_ID Transfers) (bool, error) {
 	return true, nil
 }
 
-// FITUR NO.8
-func historyTopup()
+func HistoryTopUp() {
+	// TODO: Implement historyTopup function
+}
 
-// FITUR NO.9
-func historyTransfer()
+func HistoryTransfer() {
+	// TODO: Implement historyTransfer function
+}
 
-// FITUR NO.10
-func searchProfile()
+func SearchProfile() {
+	// TODO: Implement searchProfile function
+}

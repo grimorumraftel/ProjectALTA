@@ -4,15 +4,23 @@ import (
 	"be21/config"
 	"be21/users"
 	"fmt"
-	"time"
+
 	"gorm.io/gorm"
 )
 
 func printMenu() {
 	fmt.Println("Pilih menu")
-	fmt.Println("1. Login")
-	fmt.Println("2. Register")
-	fmt.Println("99. Exit")
+	fmt.Println("1. Register")
+	fmt.Println("2. Login")
+	fmt.Println("3. ReadAccount")
+	fmt.Println("4. Update Account")
+	fmt.Println("5. Delete Account")
+	fmt.Println("6. Top-up")
+	fmt.Println("7. Transfer")
+	fmt.Println("8. History Top-up")
+	fmt.Println("9. History Transfer")
+	fmt.Println("10. Register")
+	fmt.Println("0. Exit")
 }
 
 func registerUser(connection *gorm.DB, user users.User) (bool, error) {
@@ -51,65 +59,6 @@ func main() {
 		switch input {
 		case 1:
 			fmt.Print("Enter username:")
-			fmt.Scanln(&username)
-			fmt.Print("Enter password:")
-			fmt.Scanln(&password)
-			success, err := loginUser(database, username, password)
-			if err != nil {
-				fmt.Println("Error logging in:", err)
-			} else if !success {
-				fmt.Println("Invalid username or password.")
-			} else if func CreateItem(connection *gorm.DB, item Item) (bool, error) {
-				err := connection.Create(&item).Error
-				if err != nil {
-					return false, err
-				}
-			
-				return true, nil
-			}
-			
-			func GetItems(connection *gorm.DB, userID uint) ([]Item, error) {
-				var items []Item
-				err := connection.Table("user_items").Joins("join items on items.id = user_items.item_id").Where("user_id = ?", userID).Find(&items).Error
-				if err != nil {
-					return nil, err
-				}
-			
-				return items, nil
-			}
-			
-			func UpdateItem(connection *gorm.DB, item Item) (bool, error) {
-				err := connection.Save(&item).Error
-				if err != nil {
-					return false, err
-				}
-			
-				return true, nil
-			}
-			
-			func DeleteItem(connection *gorm.DB, itemID uint) (bool, error) {
-				err := connection.Delete(&Item{}, itemID).Error
-				if err != nil {
-					return false, err
-				}
-			
-				return true, nil
-			}
-			
-			func AddItemToUser(connection *gorm.DB, userID uint, itemID uint) (bool, error) {
-				userItem := UserItem{UserID: userID, ItemID: itemID}
-				err := connection.Create(&userItem).Error
-				if err != nil {
-					return false, err
-				}
-			
-				return true, nil
-			}
-			 else { 
-				fmt.Println("Logged in successfully.")
-			}
-		case 2:
-			fmt.Print("Enter username:")
 			fmt.Scanln(&user.Username)
 			fmt.Print("Enter password:")
 			fmt.Scanln(&user.Password)
@@ -120,6 +69,19 @@ func main() {
 				fmt.Println("Registration failed.")
 			} else {
 				fmt.Println("Registered successfully.")
+			}
+		case 2:
+			fmt.Print("Enter username:")
+			fmt.Scanln(&username)
+			fmt.Print("Enter password:")
+			fmt.Scanln(&password)
+			success, err := loginUser(database, username, password)
+			if err != nil {
+				fmt.Println("Error logging in:", err)
+			} else if !success {
+				fmt.Println("Invalid username or password.")
+			} else {
+				fmt.Println("Logged in successfully.")
 			}
 		}
 	}
