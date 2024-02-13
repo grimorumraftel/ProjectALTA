@@ -1,44 +1,50 @@
 package users
 
-import "gorm.io/gorm"
+import (
+	"time"
 
-type User struct {
+	"gorm.io/gorm"
+)
+
+type TopUps struct {
 	gorm.Model
-	Username string
-	Password string
+	TopUp_ID     uint
+	Username     string `gorm:"foreignKey:UserRefer"`
+	Amount_TopUp uint
+	Topup_At     time.Time
 }
 
-type Item struct {
+type Transfers struct {
 	gorm.Model
-	Name string
+	Transfer_ID     uint
+	Amount_Transfer uint
+	Transfer_at     time.Time
 }
 
-type UserItem struct {
+type Users struct {
 	gorm.Model
-	UserID uint
-	ItemID uint
+	Username   string
+	Name       string
+	Phone      string
+	address    string
+	password   string
+	created_at time.Time
+	Balance    uint
 }
 
-func CreateItem(connection *gorm.DB, item Item) (bool, error) {
-	err := connection.Create(&item).Error
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
-func GetItems(connection *gorm.DB, userID uint) ([]Item, error) {
-	var items []Item
-	err := connection.Table("user_items").Joins("join items on items.id = user_items.item_id").Where("user_id = ?", userID).Find(&items).Error
+// FITUR NO.3
+func checkAccount(connection *gorm.DB, Username string) ([]Username, error) {
+	var Usernames []Users
+	err := connection.Table("users_Usernames").Joins("join Usernames on Username = users_Usernames.Username").Where("Usernames = ?", Username).Find(&Usernames).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return items, nil
+	return Usernames, nil
 }
 
-func UpdateItem(connection *gorm.DB, item Item) (bool, error) {
+// FITUR NO.4
+func updateAccount(connection *gorm.DB, item Item) (bool, error) {
 	err := connection.Save(&item).Error
 	if err != nil {
 		return false, err
@@ -47,8 +53,9 @@ func UpdateItem(connection *gorm.DB, item Item) (bool, error) {
 	return true, nil
 }
 
-func DeleteItem(connection *gorm.DB, itemID uint) (bool, error) {
-	err := connection.Delete(&Item{}, itemID).Error
+// FITUR NO.5
+func deleteAccount(connection *gorm.DB, Username string) (bool, error) {
+	err := connection.Delete(&Users{}, Username).Error
 	if err != nil {
 		return false, err
 	}
@@ -56,12 +63,32 @@ func DeleteItem(connection *gorm.DB, itemID uint) (bool, error) {
 	return true, nil
 }
 
-func AddItemToUser(connection *gorm.DB, userID uint, itemID uint) (bool, error) {
-	userItem := UserItem{UserID: userID, ItemID: itemID}
-	err := connection.Create(&userItem).Error
+// FITUR NO.6
+func topUpAccount(connection *gorm.DB, Username string, Amount_TopUp uint) (bool, error) {
+	usernameTopup := UserItem{Username: Username, Amount_TopUp: Amount_TopUp}
+	err := connection.Create(&usernameTopup).Error
 	if err != nil {
 		return false, err
 	}
 
 	return true, nil
 }
+
+// FITUR NO.7
+func transferBalance(connection *gorm.DB, Transfer_ID Transfers) (bool, error) {
+	err := connection.Create(&Transfers).Error
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// FITUR NO.8
+func historyTopup()
+
+// FITUR NO.9
+func historyTransfer()
+
+// FITUR NO.10
+func searchProfile()
