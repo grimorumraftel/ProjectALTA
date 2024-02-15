@@ -59,28 +59,32 @@ func (u *User) ReadAccount(connection *gorm.DB) (string, error) {
 // 	return u.Phone, nil
 // }
 
-func (u *User) UpdateAccount(connection *gorm.DB) (string, error) {
-	updateValues := map[string]interface{}{
-		"username": u.Username, // Replace "field1" with the actual field names in your User struct
-		"phone":    u.Phone,    // Replace "field2" with the actual field names in your User struct
-		// Add other fields as needed
+func (u *User) UpdateAccount(connection *gorm.DB, newPhoneNumber string) (string, error) {
+	// Store the old phone number
+	oldPhoneNumber := u.Phone
+
+	// Prepare update values with new phone number
+	updatePhone := map[string]interface{}{
+		"phone": newPhoneNumber,
 	}
 
-	query := connection.Table("users").Where("username = ? AND phone = ?", u.Username, u.Phone).Updates(updateValues)
+	// Perform the update query
+	query := connection.Table("users").Where("username = ? AND phone = ?", u.Username, oldPhoneNumber).Updates(updatePhone)
 	if err := query.Error; err != nil {
-		return "Phone", err
+		return oldPhoneNumber, err
 	}
 
-	return u.Phone, nil
+	// Return the new phone number
+	return newPhoneNumber, nil
 }
 
-func (u *User) DeleteAccount(connection *gorm.DB, Delete string) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username).Delete(Delete)
+func (u *User) DeleteAccount(connection *gorm.DB, Delete string) (string, error) {
+	query := connection.Table("users").Where("Username = ?", u.Username).First(u).Delete(Delete)
 	if err := query.Error; err != nil {
-		return false, err
+		return ("username doesn't exist on database"), err
 	}
 
-	return query.RowsAffected > 0, nil
+	return u.Username, nil
 }
 
 func (u *User) TopUpAccount(connection *gorm.DB, Balance uint) (bool, error) {

@@ -105,16 +105,28 @@ func main() {
 		case 4:
 			//call from users.go
 			var Update users.User
+			var newPhone string
 			fmt.Println("Masukan no. telp lama")
 			fmt.Scanln(&Update.Phone)
-			Phone, err := Update.UpdateAccount(database)
+			fmt.Println("Masukan no. telp baru")
+			fmt.Scanln(&newPhone)
+
+			Phone, err := Update.UpdateAccount(database, newPhone)
 			if err != nil && Phone == "Not Found" {
 				fmt.Println("Not Found")
 			} else {
 				fmt.Println(Phone, "Berhasil di ubah")
 			}
 		case 5:
-			//call from users.go
+			var delete users.User
+			fmt.Println("Masukan username yang ingin dihapus")
+			fmt.Scanln(&delete.Username)
+			nama, err := delete.DeleteAccount(database, username)
+			if err != nil && nama == "username doesn't exist on database" {
+				fmt.Println("username doesn't exist on database")
+			} else {
+				fmt.Println(user.Username, "Berhasil Dihapus") //POSITIVE RETURN
+			}
 		case 6:
 			//call from users.go
 		case 7:
