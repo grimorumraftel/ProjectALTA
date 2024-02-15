@@ -68,6 +68,10 @@ func main() {
 			fmt.Scan(&user.Phone)
 			fmt.Println("Enter Address:")
 			fmt.Scan(&user.Address)
+			fmt.Println("Enter Umur:")
+			fmt.Scan(&user.Umur)
+			fmt.Println("Enter Jenis Kelamin:")
+			fmt.Scan(&user.Jenis_Kelamin)
 
 			success, err := registerUser(database, user)
 			if err != nil {
@@ -129,15 +133,54 @@ func main() {
 			}
 		case 6:
 			//call from users.go
-		case 7:
-			//call from users.go
-		case 8:
-			//call from users.go
-		case 9:
-			//call from users.go
+			var topup users.TopUp
+			fmt.Println("Masukan jumlah yang ingin ditop-up")
+			fmt.Scanln(&topup.Amount)
+			fmt.Println("Masukan username yang ingin ditop-up")
+			fmt.Scanln(&user.Username)
+			jumlah, err := topup.TopUpAccount(database, user.Username, topup.Amount)
+			if err != nil && jumlah == 0 {
+				return
+			}
+			fmt.Println(topup.Amount, "Berhasil Ditambah") //POSITIVE RETURN
+		// case 7:
+		// 	//call from users.go
+		// 	var transfer users.Transfer
+		// 	fmt.Println("Masukan jumlah yang ingin ditop-up")
+		// 	fmt.Scanln(&transfer.Amount)
+		// 	fmt.Println("Masukan username yang ingin ditop-up")
+		// 	fmt.Scanln(&user.Username)
+		// 	transfertopup, err := transfer.TopUpAccount(database, transfer.Amount, transfer.Username)
+		// 	if err != nil && transfertopup == "username doesn't exist on database" {
+		// 		return
+		// 	}
+		// 	fmt.Println(transfer.Amount, "Berhasil Ditambah ke username", user.Username) //POSITIVE RETURN
+		// case 8:
+		// 	//call from history topup
+		// 	var htopup users.User
+		// 	fmt.Println("Masukan username yang ingin dilihat historynya")
+		// 	fmt.Scanln(&htopup.Username)
+		// 	history, err := htopup.HistoryTopUp(database, htopup.TopUpID)
+		// 	if err != nil && history == "Not Found" {
+		// 		fmt.Println("Not Found")
+		// 	} else {
+		// 		fmt.Println(history, "Ada di database")
+		// 	}
+		// case 9:
+		//call from users.go
 		case 10:
-			//call from users.go
+			//call searchprofile
+			var sp users.User
+			fmt.Println("Masukan username yang ingin dilihat profilenya")
+			fmt.Scanln(&sp.Username)
+			profSearch, returnName, returnUmur, err := sp.SearchProfile(database, user.Name, user.Umur, user.Jenis_Kelamin)
+			if err != nil && profSearch == "Not Found" {
+				fmt.Println("Not Found")
+			} else {
+				fmt.Println(profSearch, returnName, returnUmur)
+			}
 		}
+
+		fmt.Println("Exited! Thank you")
 	}
-	fmt.Println("Exited! Thank you")
 }

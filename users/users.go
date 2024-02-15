@@ -23,13 +23,15 @@ type Transfer struct {
 
 type User struct {
 	gorm.Model
-	Username  string
-	Name      string
-	Phone     string
-	Address   string
-	Password  string
-	CreatedAt time.Time
-	Balance   uint
+	Username      string
+	Name          string
+	Jenis_Kelamin string
+	Umur          string
+	Phone         string
+	Address       string
+	Password      string
+	CreatedAt     time.Time
+	Balance       uint
 }
 
 func (u *User) ChangePassword(connection *gorm.DB, newPassword string) (bool, error) {
@@ -87,49 +89,53 @@ func (u *User) DeleteAccount(connection *gorm.DB, Delete string) (string, error)
 	return u.Username, nil
 }
 
-func (u *User) TopUpAccount(connection *gorm.DB, Balance uint) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username).Update("Balance", Balance)
-	if err := query.Error; err != nil {
-		return false, err
+func (t *TopUp) TopUpAccount(connection *gorm.DB, username string, Amount uint) (uint, error) {
+	query1 := connection.Table("top_ups").Create(t)
+	if err := query1.Error; err != nil {
+		return 0, err
+	}
+	query2 := connection.Table("users").Where("username = ?", username).Update("balance", Amount)
+	if err := query2.Error; err != nil {
+		return 0, err
 	}
 
-	return query.RowsAffected > 0, nil
+	return t.Amount, nil
 }
 
-func (u *User) TransferBalance(connection *gorm.DB, Transfer uint) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username)
+// func (u *User) TransferBalance(connection *gorm.DB, Transfer uint) (uint error) {
+// 	query := connection.Table("users").Where("Username = ?", u.Username)
+// 	if err := query.Error; err != nil {
+// 		return err
+// 	}
+
+// 	return Transfer.TransferID, nil
+// }
+
+// func (u *User) HistoryTopUp(connection *gorm.DB, historyTopUp string) (string, error) {
+// 	query := connection.Table("users").Where("Username = ?", u.Username).Find(u).Select("History Top Up", historyTopUp)
+// 	if err := query.Error; err != nil {
+// 		return ("history tidak ditemukan"), err
+// 	}
+
+// 	return TopUp.TopUpID, nil
+// }
+
+// func (u *User) HistoryTransfer(connection *gorm.DB, historyTransfer string) (bool, error) {
+// 	query := connection.Table("users").Where("Username = ?", u.Username).Select("History Transfer", historyTransfer)
+// 	if err := query.Error; err != nil {
+// 		return false, err
+// 	}
+
+// 	return query.RowsAffected > 0, nil
+// }
+
+func (u *User) SearchProfile(connection *gorm.DB, Name, Umur, Jenis_Kelamin string) (string, string, string, error) {
+	query := connection.Table("users").Where("Username = ?", u.Username).Select("Name", "Umur", "Jenis_Kelamin").Find(u)
 	if err := query.Error; err != nil {
-		return false, err
+		return ("Not Found"), "", "", err
 	}
 
-	return query.RowsAffected > 0, nil
-}
-
-func (u *User) HistoryTopUp(connection *gorm.DB, historyTopUp string) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username).Select("History Top Up", historyTopUp)
-	if err := query.Error; err != nil {
-		return false, err
-	}
-
-	return query.RowsAffected > 0, nil
-}
-
-func (u *User) HistoryTransfer(connection *gorm.DB, historyTransfer string) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username).Select("History Transfer", historyTransfer)
-	if err := query.Error; err != nil {
-		return false, err
-	}
-
-	return query.RowsAffected > 0, nil
-}
-
-func (u *User) SearchProfile(connection *gorm.DB, searchProfile string) (bool, error) {
-	query := connection.Table("users").Where("Username = ?", u.Username).Select("Profile want to search", searchProfile)
-	if err := query.Error; err != nil {
-		return false, err
-	}
-
-	return query.RowsAffected > 0, nil
+	return u.Name, u.Umur, u.Jenis_Kelamin, nil
 }
 
 // func CheckAccount(connection *gorm.DB, username string) (User, error) {
