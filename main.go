@@ -12,14 +12,14 @@ func printMenu() {
 	fmt.Println("Pilih menu")
 	fmt.Println("1. Register")
 	fmt.Println("2. Login")
-	fmt.Println("3. ReadAccount")
+	fmt.Println("3. Read Account")
 	fmt.Println("4. Update Account")
 	fmt.Println("5. Delete Account")
 	fmt.Println("6. Top-up")
 	fmt.Println("7. Transfer")
 	fmt.Println("8. History Top-up")
 	fmt.Println("9. History Transfer")
-	fmt.Println("10. Register")
+	fmt.Println("10. Search Profile")
 	fmt.Println("0. Exit")
 }
 
@@ -58,10 +58,17 @@ func main() {
 		fmt.Scanln(&input)
 		switch input {
 		case 1:
-			fmt.Print("Enter username:")
-			fmt.Scanln(&user.Username)
-			fmt.Print("Enter password:")
-			fmt.Scanln(&user.Password)
+			fmt.Println("Enter Username:")
+			fmt.Scan(&user.Username)
+			fmt.Println("Enter Password:")
+			fmt.Scan(&user.Password)
+			fmt.Println("Enter Name:")
+			fmt.Scan(&user.Name)
+			fmt.Println("Enter Phone:")
+			fmt.Scan(&user.Phone)
+			fmt.Println("Enter Address:")
+			fmt.Scan(&user.Address)
+
 			success, err := registerUser(database, user)
 			if err != nil {
 				fmt.Println("Error registering:", err)
@@ -83,6 +90,41 @@ func main() {
 			} else {
 				fmt.Println("Logged in successfully.")
 			}
+		case 3:
+			//call function ReadAccount from users.go
+			var usr users.User
+			fmt.Println("Masukan username yang ingin dilihat/dibaca")
+			fmt.Scanln(&usr.Username)
+			nama, err := usr.ReadAccount(database)
+			if err != nil && nama == "Not Found" {
+				fmt.Println("Not Found")
+			} else {
+				fmt.Println(nama, "Ada di database")
+			}
+
+		case 4:
+			//call from users.go
+			var Update users.User
+			fmt.Println("Masukan no. telp lama")
+			fmt.Scanln(&Update.Phone)
+			Phone, err := Update.UpdateAccount(database)
+			if err != nil && Phone == "Not Found" {
+				fmt.Println("Not Found")
+			} else {
+				fmt.Println(Phone, "Berhasil di ubah")
+			}
+		case 5:
+			//call from users.go
+		case 6:
+			//call from users.go
+		case 7:
+			//call from users.go
+		case 8:
+			//call from users.go
+		case 9:
+			//call from users.go
+		case 10:
+			//call from users.go
 		}
 	}
 	fmt.Println("Exited! Thank you")
