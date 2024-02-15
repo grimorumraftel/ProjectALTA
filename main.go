@@ -143,18 +143,20 @@ func main() {
 				return
 			}
 			fmt.Println(topup.Amount, "Berhasil Ditambah") //POSITIVE RETURN
-		// case 7:
-		// 	//call from users.go
-		// 	var transfer users.Transfer
-		// 	fmt.Println("Masukan jumlah yang ingin ditop-up")
-		// 	fmt.Scanln(&transfer.Amount)
-		// 	fmt.Println("Masukan username yang ingin ditop-up")
-		// 	fmt.Scanln(&user.Username)
-		// 	transfertopup, err := transfer.TopUpAccount(database, transfer.Amount, transfer.Username)
-		// 	if err != nil && transfertopup == "username doesn't exist on database" {
-		// 		return
-		// 	}
-		// 	fmt.Println(transfer.Amount, "Berhasil Ditambah ke username", user.Username) //POSITIVE RETURN
+		case 7:
+			//call from users.go
+			var transfer users.Transfer
+			fmt.Println("Masukan username sender yang ingin ditop-up")
+			fmt.Scanln(&user.Username)
+			fmt.Println("Masukan username receiver yang ingin ditop-up")
+			fmt.Scanln(&user.Username)
+			fmt.Println("Masukan jumlah yang ingin ditop-up")
+			fmt.Scanln(&transfer.Amount)
+			transfertopup, tf, err := transfer.TransferBalance(database, user.username_sender)
+			if err != nil && transfertopup == 0 {
+				return
+			}
+			fmt.Println(transfer.Amount, "Berhasil Ditambah ke username", user.Username) //POSITIVE RETURN
 		// case 8:
 		// 	//call from history topup
 		// 	var htopup users.User

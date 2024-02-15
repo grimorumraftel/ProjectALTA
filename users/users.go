@@ -102,14 +102,18 @@ func (t *TopUp) TopUpAccount(connection *gorm.DB, username string, Amount uint) 
 	return t.Amount, nil
 }
 
-// func (u *User) TransferBalance(connection *gorm.DB, Transfer uint) (uint error) {
-// 	query := connection.Table("users").Where("Username = ?", u.Username)
-// 	if err := query.Error; err != nil {
-// 		return err
-// 	}
+func (t *Transfer) TransferBalance(connection *gorm.DB, username string, Amount uint) (uint, error) {
+	query1 := connection.Table("transfers").Create(t)
+	if err := query1.Error; err != nil {
+		return 0, err
+	}
+	query2 := connection.Table("users").Where("username = ?", username).Update("balance", Amount)
+	if err := query2.Error; err != nil {
+		return 0, err
+	}
 
-// 	return Transfer.TransferID, nil
-// }
+	return t.Amount, nil
+}
 
 // func (u *User) HistoryTopUp(connection *gorm.DB, historyTopUp string) (string, error) {
 // 	query := connection.Table("users").Where("Username = ?", u.Username).Find(u).Select("History Top Up", historyTopUp)
