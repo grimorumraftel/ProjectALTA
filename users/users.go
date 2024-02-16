@@ -100,7 +100,7 @@ func (t *TopUp) TopUpAccount(connection *gorm.DB, username string, Amount uint) 
 	return t.Amount, nil
 }
 
-func (t *Transfer) TransferBalance(database *gorm.DB, Sender string, Receiver string, Amount uint) (string, uint, string, error) {
+func (t *Transfer) TransferBalance(database *gorm.DB, Sender string, Amount uint, Receiver string) (string, uint, string, error) {
 	// Fetch sender and receiver from the database
 	var sender, receiver User
 	database.Where("username = ?", t.SenderUsername).First(&sender)
@@ -108,7 +108,7 @@ func (t *Transfer) TransferBalance(database *gorm.DB, Sender string, Receiver st
 
 	// Check if sender has sufficient balance
 	if sender.Balance < t.Amount {
-		return ("Input salah"), 0, "", nil
+		return "Gagal Melakukan Transfer Saldo", 0, "", nil
 	}
 
 	// Perform the transfer

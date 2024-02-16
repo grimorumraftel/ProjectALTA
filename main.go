@@ -146,21 +146,19 @@ func main() {
 		case 7:
 			// call from method TransferBalance on file users.go
 			var transfer users.Transfer
-			fmt.Println("Masukan username sender yang ingin ditransfer")
+			fmt.Println("Masukan username sender")
 			fmt.Scanln(&transfer.SenderUsername)
-			fmt.Println("Masukan username receiver yang ingin ditransfer")
+			fmt.Println("Masukan username receiver")
 			fmt.Scanln(&transfer.ReceiverUsername)
 			fmt.Println("Masukan jumlah yang ingin ditransfer")
 			fmt.Scanln(&transfer.Amount)
 
 			senderUsername, transferredAmount, receiverUsername, err := transfer.TransferBalance(database, transfer.SenderUsername, transfer.Amount, transfer.ReceiverUsername)
 			if err != nil && transferredAmount == 0 {
-				fmt.Println("Gagal melakukan transfer:", 0, "Gagal", err)
-				return
+				fmt.Println("Gagal melakukan transfer:")
+			} else {
+				fmt.Println(senderUsername, "Mengirim Saldo Sebesar", transferredAmount, "Ke Username", receiverUsername)
 			}
-
-			fmt.Println(senderUsername, "Mengirim Saldo Sebesar", transferredAmount, "Ke Username", receiverUsername)
-
 		// case 8:
 		// 	//call from history topup
 		// 	var htopup users.User
