@@ -144,32 +144,36 @@ func main() {
 			}
 			fmt.Println(topup.Amount, "Berhasil Ditambah") //POSITIVE RETURN
 		case 7:
-			//call from users.go
+			// call from method TransferBalance on file users.go
 			var transfer users.Transfer
-			fmt.Println("Masukan username sender yang ingin ditop-up")
-			fmt.Scanln(&user.Username)
-			fmt.Println("Masukan username receiver yang ingin ditop-up")
-			fmt.Scanln(&user.Username)
-			fmt.Println("Masukan jumlah yang ingin ditop-up")
+			fmt.Println("Masukan username sender yang ingin ditransfer")
+			fmt.Scanln(&transfer.SenderUsername)
+			fmt.Println("Masukan username receiver yang ingin ditransfer")
+			fmt.Scanln(&transfer.ReceiverUsername)
+			fmt.Println("Masukan jumlah yang ingin ditransfer")
 			fmt.Scanln(&transfer.Amount)
-			transfertopup, tf, err := transfer.TransferBalance(database, user.username_sender)
-			if err != nil && transfertopup == 0 {
+
+			senderUsername, transferredAmount, receiverUsername, err := transfer.TransferBalance(database, transfer.SenderUsername, transfer.Amount, transfer.ReceiverUsername)
+			if err != nil && transferredAmount == 0 {
+				fmt.Println("Gagal melakukan transfer:", 0, "Gagal", err)
 				return
 			}
-			fmt.Println(transfer.Amount, "Berhasil Ditambah ke username", user.Username) //POSITIVE RETURN
+
+			fmt.Println(senderUsername, "Mengirim Saldo Sebesar", transferredAmount, "Ke Username", receiverUsername)
+
 		// case 8:
 		// 	//call from history topup
 		// 	var htopup users.User
 		// 	fmt.Println("Masukan username yang ingin dilihat historynya")
 		// 	fmt.Scanln(&htopup.Username)
-		// 	history, err := htopup.HistoryTopUp(database, htopup.TopUpID)
-		// 	if err != nil && history == "Not Found" {
+		// 	history, amount, TopUpTime err := htopup.HistoryTopUp(database, htopup.TopUpID)
+		// 	if err != nil && history == 0 {
 		// 		fmt.Println("Not Found")
 		// 	} else {
-		// 		fmt.Println(history, "Ada di database")
+		// 		fmt.Println(history.TopupID,  "Ada di database")
 		// 	}
 		// case 9:
-		//call from users.go
+		//call from history transfer
 		case 10:
 			//call searchprofile
 			var sp users.User

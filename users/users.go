@@ -1,24 +1,21 @@
 package users
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
 type TopUp struct {
 	gorm.Model
-	TopUpID   uint
-	Username  string `gorm:"foreignKey:UserRefer"`
-	Amount    uint
-	TopUpTime time.Time
+	TopUpID  uint
+	Username string `gorm:"foreignKey:UserRefer"`
+	Amount   uint
 }
 
 type Transfer struct {
 	gorm.Model
-	TransferID   uint
-	Amount       uint
-	TransferTime time.Time
+	SenderUsername   string
+	Amount           uint
+	ReceiverUsername string
 }
 
 type User struct {
@@ -30,7 +27,8 @@ type User struct {
 	Phone         string
 	Address       string
 	Password      string
-	CreatedAt     time.Time
+	Send          []Transfer `gorm:"foreignKey:SenderUsername;reference:username"`
+	Receive       []Transfer `gorm:"foreignKey:ReceiverUsername;reference:username"`
 	Balance       uint
 }
 
@@ -102,26 +100,35 @@ func (t *TopUp) TopUpAccount(connection *gorm.DB, username string, Amount uint) 
 	return t.Amount, nil
 }
 
-func (t *Transfer) TransferBalance(connection *gorm.DB, username string, Amount uint) (uint, error) {
-	query1 := connection.Table("transfers").Create(t)
-	if err := query1.Error; err != nil {
-		return 0, err
-	}
-	query2 := connection.Table("users").Where("username = ?", username).Update("balance", Amount)
-	if err := query2.Error; err != nil {
-		return 0, err
+func (t *Transfer) TransferBalance(database *gorm.DB, Sender string, Receiver string, Amount uint) (string, uint, string, error) {
+	// Fetch sender and receiver from the database
+	var sender, receiver User
+	database.Where("username = ?", t.SenderUsername).First(&sender)
+	database.Where("username = ?", t.ReceiverUsername).First(&receiver)
+
+	// Check if sender has sufficient balance
+	if sender.Balance < t.Amount {
+		return ("Input salah"), 0, "", nil
 	}
 
-	return t.Amount, nil
+	// Perform the transfer
+	sender.Balance -= t.Amount
+	receiver.Balance += t.Amount
+
+	// Update the balances in the database
+	database.Save(&sender)
+	database.Save(&receiver)
+
+	return t.SenderUsername, t.Amount, t.ReceiverUsername, nil
 }
 
-// func (u *User) HistoryTopUp(connection *gorm.DB, historyTopUp string) (string, error) {
-// 	query := connection.Table("users").Where("Username = ?", u.Username).Find(u).Select("History Top Up", historyTopUp)
+// func (u *User) HistoryTopUp(connection *gorm.DB, TopUp string, Sender string) (string, string, uint, error) {
+// 	query := connection.Table("users").Where("Username = ?", u.Username).Select("TopupID", "Amount", "TransferID", "Amout").Find(u)
 // 	if err := query.Error; err != nil {
-// 		return ("history tidak ditemukan"), err
+// 		return 0, err
 // 	}
 
-// 	return TopUp.TopUpID, nil
+// 	return TopUp.SenderUsername, TopUp.Rec, nil
 // }
 
 // func (u *User) HistoryTransfer(connection *gorm.DB, historyTransfer string) (bool, error) {
